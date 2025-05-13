@@ -33,11 +33,28 @@ function App() {
     }
   };
 
+  const updateItem = async (id, newData) => {
+    try {
+      const res = await fetch(`${API_URI}/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newData),
+      });
+      if (!res.ok) throw new Error("Failed to update");
+      const updatedItem = await res.json();
+      setItems((prev) =>
+        prev.map((item) => (item.id === id ? updatedItem : item))
+      );
+    } catch (err) {
+      setError("Error updating item");
+    }
+  };
+
   return (
     <>
       <h1>🚪 Door List</h1>
       {error && <p style={{ color: "red" }}>{error}</p>}
-      <ItemList items={items} onDelete={deleteItem} />
+      <ItemList items={items} onDelete={deleteItem} onUpdate={updateItem} />
     </>
   );
 }
